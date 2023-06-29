@@ -1,23 +1,50 @@
 package nid.pacote.principal;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class Pessoa {
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity // informando que é uma entidade
+public abstract class Pessoa implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	@Id // chave primaria de id
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // gerando chave primaria, quem irá gerar é o banco 
 	protected Integer id;
 	protected  String nome;
+	
+	@Column(unique = true)// essa coluna é unica ou seja nao vai existir os dados iguais
 	protected String cpf;
+	
+	@Column(unique = true)// essa coluna é unica ou seja nao vai existir os dados iguais
 	protected String email;
+	
 	protected String senha;
+	
+	@ElementCollection(fetch = FetchType.EAGER) //essa é uma coleção, que quando buscar ele irá vir, irá depender do perfil de usuario
+	@CollectionTable(name = "PERFIS") // NO BANCO IRA TER UMA TABELA COM OS PERFILS
 	protected Set<Integer> perfis = new HashSet<>(); //set nao permite que tenha dois perfil igual
+	
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	protected LocalDate dateCriacao = LocalDate.now();
 	
 	public Pessoa() {
 		super();
-		addPerfil(Perfil.FUNCIONARIO);
+		addPerfil(Perfil.FUNCIONARIO);// TODO USUARIO ADICIONADO NO SISTEMA IRÁ TER O PERFIL DE FUNCIONARIO
 	}
 
 	public Pessoa(Integer id, String nome, String cpf, String email, String senha) {

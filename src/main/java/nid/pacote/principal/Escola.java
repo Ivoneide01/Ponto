@@ -1,10 +1,27 @@
 package nid.pacote.principal;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Escola {
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+@Entity // informando que é uma entidade
+public class Escola implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+	
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataAbertura = LocalDate.now();
 	private LocalDate dataFechamento;
 	private Prioridade prioridade;
@@ -12,7 +29,11 @@ public class Escola {
 	private String titulo;
 	private String observacoes;
 	
+	@ManyToOne // muitas escolas para um dono
+	@JoinColumn(name = "dono_id")
 	private Dono dono;
+	
+	@JoinColumn(name = "funcionario_id")
 	private Funcionario funcionario;
 	public Escola() {
 		super();
